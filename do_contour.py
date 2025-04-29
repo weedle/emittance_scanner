@@ -27,16 +27,16 @@ def run():
     motor_step_size = float(get_line())
     voltage_min  = float(get_line())*100
     voltage_step_size = float(get_line())*100
-    voltage_steps = int(get_line())+1
+    voltage_steps = int(get_line())
     position_steps = int(get_line())+1
 
-    voltage_max = voltage_min + voltage_step_size * (voltage_steps-1)
-    motor_end = motor_start + motor_step_size * (position_steps-1)
+    voltage_max = voltage_min + voltage_step_size * voltage_steps
+    motor_end = motor_start + motor_step_size * position_steps
 
     thetaConversionConstant = plate_length * 1000 / (beam_energy * 4 * plate_gap)
 
     xVector = [motor_start + i * (motor_end - motor_start) / position_steps for i in range(position_steps)]
-    thetaVector = [+ voltage_min + i * (voltage_max - voltage_min) / voltage_steps for i in range(voltage_steps)]
+    thetaVector = [voltage_min + i * (voltage_max - voltage_min) / voltage_steps for i in range(voltage_steps)]
 
     thetaVector = [thetaVectorI * thetaConversionConstant for thetaVectorI in thetaVector]
 
