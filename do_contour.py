@@ -28,7 +28,11 @@ def run():
     voltage_min  = float(get_line())*100
     voltage_step_size = float(get_line())*100
     voltage_steps = int(get_line())
+<<<<<<< Updated upstream
     position_steps = int(get_line())+1
+=======
+    position_steps = int(get_line())
+>>>>>>> Stashed changes
 
     voltage_max = voltage_min + voltage_step_size * voltage_steps
     motor_end = motor_start + motor_step_size * position_steps

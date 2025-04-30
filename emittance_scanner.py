@@ -6,6 +6,7 @@ import time
 import traceback
 
 import pysides
+import numpy as np
 
 # For development, a placeholder file is available that simulates a Galil microprocessor
 #import motor_control_fake as mc
@@ -77,20 +78,20 @@ def getMeasurementSettings():
 
     settings["start_auto_voltage"] = float(object_map["inputVoltageAutoStart"].text())
     settings["end_auto_voltage"] = float(object_map["inputVoltageAutoEnd"].text())
-    settings["voltage_auto_step_size"] = float((float(settings["end_auto_voltage"]) - float(settings["start_auto_voltage"])) / float(object_map["inputVoltageAutoNumSteps"].text()))
+    settings["voltage_auto_num_steps"] = int(object_map["inputVoltageAutoNumSteps"].text())
     settings["start_auto_motor"] = pysides.get_position_from_mm(int(object_map["inputMotorAutoStart"].text()))
     settings["end_auto_motor"] = pysides.get_position_from_mm(int(object_map["inputMotorAutoEnd"].text()))
-    settings["motor_auto_step_size"] = int((settings["end_auto_motor"] - settings["start_auto_motor"]) / int(object_map["inputMotorAutoNumSteps"].text()))
+    settings["motor_auto_num_steps"] = int(object_map["inputMotorAutoNumSteps"].text())
     try:
         settings["start_voltage"] = float(start_voltage) if start_voltage != "" else float(object_map["inputVoltageAutoStart"].text())
         settings["end_voltage"] = float(end_voltage) if end_voltage != "" else float(object_map["inputVoltageAutoEnd"].text())
         num_steps = int(voltage_steps) if voltage_steps != "" else int(object_map["inputVoltageAutoNumSteps"].text())
-        settings["voltage_step_size"] = (float(settings["end_voltage"]) - float(settings["start_voltage"])) / num_steps
+        settings["voltage_num_steps"] = num_steps
 
         settings["start_motor"] = int(start_motor) if start_motor != "" else pysides.get_position_from_mm(int(object_map["inputMotorAutoStart"].text()))
         settings["end_motor"] = int(end_motor) if end_motor != "" else pysides.get_position_from_mm(int(object_map["inputMotorAutoEnd"].text()))
         num_steps = int(motor_steps) if motor_steps != "" else int(object_map["inputMotorAutoNumSteps"].text())
-        settings["motor_step_size"] = int((int(settings["end_motor"]) - int(settings["start_motor"])) / num_steps)
+        settings["motor_num_steps"] = num_steps
     except Exception as e:
         print("Failed to load user settings", e)
 
@@ -245,13 +246,13 @@ class MainWindow(QMainWindow):
                 print("steps to mm conversion is", steps_to_mm)
                 datafile.write(str(round(stepsMotor * steps_to_mm, 4)) + "\n")
                 datafile.write(str(startVoltage) + "\n")
-                datafile.write(str(round(stepsVoltage, 4)) + "\n")
-                datafile.write(str(int((endVoltage - startVoltage) / stepsVoltage)) + "\n")
-                datafile.write(str(int((endMotor - startMotor) / stepsMotor)) + "\n")
+                datafile.write(str(round(endVoltage - startVoltage / stepsVoltage, 4)) + "\n")
+                datafile.write(str(stepsVoltage) + "\n")
+                datafile.write(str(stepsMotor) + "\n")
                 
                 mc.set_speed(200000)
 
-                for pos in range(startMotor, endMotor, stepsMotor):
+                for pos in np.linspace(startMotor, endMotor, stepsMotor):
                     if not running:
                         return
                     time.sleep(1)
@@ -259,14 +260,14 @@ class MainWindow(QMainWindow):
                     while mc.is_in_motion() and running:
                         print(f"curr pos {currentPosition} ({pysides.get_position_in_mm(currentPosition)}), aiming for pos {pos} ({pysides.get_position_in_mm(pos)})")
                         time.sleep(0.5)
-                    currentOutputVoltage = startVoltage
                     dataline = ""
-                    while currentOutputVoltage <= endVoltage and running:
+                    for currentOutputVoltage in np.linspace(startVoltage, endVoltage, stepsVoltage):
+                        if not running:
+                            return
                         mc.set_output_voltage(round(currentOutputVoltage, 2))
                         time.sleep(0.05)
                         dataline += str(currentInputVoltage) + " "
                         print(f"currently at {pos} and sending out {round(currentOutputVoltage, 2)} to read in {currentInputVoltage}")
-                        currentOutputVoltage += stepsVoltage
                     datafile.write(dataline + "\n")
                 datafile.close()
                 running = False
@@ -333,7 +334,7 @@ class MainWindow(QMainWindow):
         stepsVoltage = settings["voltage_auto_step_size"]
         startMotor = settings["start_auto_motor"]
         endMotor = settings["end_auto_motor"]
-        stepsMotor = settings["motor_auto_step_size"]
+        stepsMotor = settings["motor_auto_num_steps"]
         self.do_measurement(startMotor, endMotor, stepsMotor,
                        startVoltage, endVoltage, stepsVoltage)
 
@@ -342,10 +343,10 @@ class MainWindow(QMainWindow):
         settings = getMeasurementSettings()
         startVoltage = settings["start_voltage"]
         endVoltage = settings["end_voltage"]
-        stepsVoltage = settings["voltage_step_size"]
+        stepsVoltage = settings["voltage_num_steps"]
         startMotor = settings["start_motor"]
         endMotor = settings["end_motor"]
-        stepsMotor = settings["motor_step_size"]
+        stepsMotor = settings["motor_num_steps"]
         self.do_measurement(startMotor, endMotor, stepsMotor,
                        startVoltage, endVoltage, stepsVoltage)
 
