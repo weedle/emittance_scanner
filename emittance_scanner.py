@@ -254,7 +254,7 @@ class MainWindow(QMainWindow):
         while running:
             try:
                 pysides.setFileName()
-                datafile = open(pysides.file_path + object_map["inputFile"].text(), 'w')
+                datafile = open(os.path.join(pysides.file_path, object_map["inputFile"].text()), 'w')
                 print(object_map["inputFile"].text())
 
                 datafile.write(object_map["inputComment"].text() + "\n")
@@ -353,7 +353,7 @@ class MainWindow(QMainWindow):
         settings = getMeasurementSettings()
         startVoltage = settings["start_auto_voltage"]
         endVoltage = settings["end_auto_voltage"]
-        stepsVoltage = settings["voltage_auto_step_size"]
+        stepsVoltage = settings["voltage_auto_num_steps"]
         startMotor = settings["start_auto_motor"]
         endMotor = settings["end_auto_motor"]
         stepsMotor = settings["motor_auto_num_steps"]
