@@ -106,7 +106,11 @@ def run():
     print("Emittance: " + str(emittance))
 
     fig0, ax0 = plt.subplots(figsize=(7, 8), facecolor = 'w', edgecolor = 'k')
-    plt.contourf(xNew,thetaNew,df, 50, cmap='jet')
+
+    cnt = plt.contourf(xNew,thetaNew,df, 50, cmap='jet')
+    cbar = plt.colorbar()
+    cbar.set_label("Voltage read (V)")
+
     ax0.set_xlabel('mm', fontsize=18)
     ax0.set_ylabel('mrad', fontsize=18)
     plt.yticks(fontsize=20)
@@ -116,3 +120,7 @@ def run():
     plt.tight_layout()
 
     plt.show()
+
+if __name__ == "__main__":
+   load_file()
+   run()
