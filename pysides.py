@@ -18,10 +18,7 @@ from PySide6.QtWidgets import (
 
 import do_contour
 
-#windows
-#file_path = "C:\\Users\\IONSIDES11PC\\OneDrive\\Desktop\\emittance_scanner\\emittance\\"
-#mac
-file_path = r"C:\Users\IONSIDES11PC\OneDrive\Documents\emittance_scanner\results"
+file_path = ""
 
 # UI file
 # This can be modified to change the user interface as needed
