@@ -1,7 +1,7 @@
 import sys
 import time
 
-from os import listdir
+from os import listdir, path
 
 from PySide6.QtCore import Qt, QMargins, Slot
 from PySide6.QtGui import QColor
@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (
 
 import do_contour
 
-file_path = ""
+results_dir = ""    # Set in emittance_scanner.py
 
 # UI file
 # This can be modified to change the user interface as needed
@@ -222,7 +222,7 @@ def generateEnergyRow():
 
 def generateContourPlot():
     print("generating contour with data file", object_map["inputFile"].text())
-    do_contour.load_file(file_path + object_map["inputFile"].text())
+    do_contour.load_file(results_dir + object_map["inputFile"].text())
     do_contour.run()
     
 def setFileName():
@@ -249,7 +249,7 @@ def generateFileRow(lbl):
 
 def populateListOfFiles():
     comboBox = object_map["comboBoxFiles"]
-    files = listdir(file_path)
+    files = listdir(results_dir)
     for file in files:
         if file[-4:] == ".dat":
             comboBox.addItem(file)
@@ -352,11 +352,11 @@ def updateLimitSwitchStates(atHome, atFaraday, atEnd):
 
 @Slot()
 def runFile():
-    do_contour.load_file(file_path + object_map["inputFile"].text())
+    do_contour.load_file(path.join(results_dir, object_map["inputFile"].text()))
     do_contour.run()
 
 @Slot()
 def runFileFromList():
     comboBox = object_map["comboBoxFiles"]
-    do_contour.load_file(file_path + comboBox.currentText())
+    do_contour.load_file(path.join(results_dir + comboBox.currentText()))
     do_contour.run()

@@ -151,7 +151,7 @@ class MainWindow(QMainWindow):
 
         settings = self.loadSettings()
         mc.setup(settings["address"])
-        pysides.file_path = settings["saveLocation"]
+        pysides.results_dir = settings["saveLocation"]
 
 
         self.setWindowTitle("IONSID Emittance Scanning")
@@ -254,7 +254,7 @@ class MainWindow(QMainWindow):
         while running:
             try:
                 pysides.setFileName()
-                datafile = open(os.path.join(pysides.file_path, object_map["inputFile"].text()), 'w')
+                datafile = open(os.path.join(pysides.results_dir, object_map["inputFile"].text()), 'w')
                 print(object_map["inputFile"].text())
 
                 datafile.write(object_map["inputComment"].text() + "\n")
