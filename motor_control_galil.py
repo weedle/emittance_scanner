@@ -6,7 +6,7 @@ import time
 galil_connector = gclib.py()
 
 def setup():
-    galil_connector.GOpen('192.1.42.2')
+    galil_connector.GOpen('192.1.42.3')
     print(galil_connector.GInfo())
     galil_connector.GCommand('CN1,-1,1')
     galil_connector.GCommand('SP10000;AC10000;DC10000')

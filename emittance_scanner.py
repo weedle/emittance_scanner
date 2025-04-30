@@ -9,8 +9,8 @@ import pysides
 import numpy as np
 
 # For development, a placeholder file is available that simulates a Galil microprocessor
-import motor_control_fake as mc
-#import motor_control_galil as mc
+#import motor_control_fake as mc
+import motor_control_galil as mc
 from pysides import object_map
 
 # This is the main application
