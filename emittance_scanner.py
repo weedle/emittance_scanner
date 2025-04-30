@@ -5,6 +5,7 @@ import json
 import sys
 import time
 import traceback
+import os
 
 import pysides
 import numpy as np
@@ -20,11 +21,15 @@ from pysides import object_map
 
 # application in global values cause I was in a rush
 running = True
-keepCheckingStatus = True
+keepCheckingStatus = True   
 currentPosition = 0
 currentStatus = 0
 currentOutputVoltage = 0
 currentInputVoltage = 0
+PROPERTIES_FILE_NAME = "properties.json"
+full_path = os.path.realpath(__file__)
+script_path, _ = os.path.split(full_path)
+properties_file_path = os.path.join(script_path, PROPERTIES_FILE_NAME)
 
 # Static buttons
 @Slot()
@@ -166,8 +171,9 @@ class MainWindow(QMainWindow):
         self.doneCalibration()
 
     def loadSettings(self):
+        print(properties_file_path)
         try:
-            with open("properties.json") as file:
+            with open(properties_file_path) as file:
                 data = json.load(file)
                 print(data)
         except FileNotFoundError as e:
