@@ -5,8 +5,8 @@ import time
 
 galil_connector = gclib.py()
 
-def setup():
-    galil_connector.GOpen('192.1.42.2')
+def setup(address):
+    galil_connector.GOpen(address)
     print(galil_connector.GInfo())
     galil_connector.GCommand('CN1,-1,1')
     galil_connector.GCommand('SP10000;AC10000;DC10000')
@@ -72,5 +72,3 @@ def cleanup():
     stop_motor()
     set_speed(100000)
     set_output_voltage(0)
-
-setup()

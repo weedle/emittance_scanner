@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QVBoxLayout, QLabel, QPushButton, QWidget, QMainWindow, QApplication
 from PySide6.QtCore import QTimer, QRunnable, Slot, Signal, QObject, QThreadPool
 
+import json
 import sys
 import time
 import traceback
@@ -143,6 +144,11 @@ class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        settings = self.loadSettings()
+        mc.setup(settings["address"])
+        pysides.file_path = settings["saveLocation"]
+
+
         self.setWindowTitle("IONSID Emittance Scanning")
         self.setCentralWidget(pysides.getMainFrame())
         linkButtons(self.startMeasurementWorker, self.startAutoMeasurementWorker, self.startCalibrationWorker)
@@ -158,6 +164,16 @@ class MainWindow(QMainWindow):
         self.timer.start()
         
         self.doneCalibration()
+
+    def loadSettings(self):
+        try:
+            with open("properties.json") as file:
+                data = json.load(file)
+                print(data)
+        except FileNotFoundError as e:
+            print("Unable to find properties file")
+            exit(1)
+        return data
 
     def startAutoMeasurementWorker(self):
         worker = Worker(self.worker_auto_measurement)  # Any other args, kwargs are passed to the run function
