@@ -244,9 +244,9 @@ class MainWindow(QMainWindow):
                 datafile.write(str(pysides.get_position_in_mm_raw(startMotor)) + "\n")
                 steps_to_mm = 196 / (pysides.auto_End - pysides.auto_Home)
                 print("steps to mm conversion is", steps_to_mm)
-                datafile.write(str(round((endMotor - startMotor) / stepsMotor * steps_to_mm, 4)) + "\n")
+                datafile.write(str(round(stepsMotor * steps_to_mm, 4)) + "\n")
                 datafile.write(str(startVoltage) + "\n")
-                datafile.write(str(round((endVoltage - startVoltage) / stepsVoltage, 4)) + "\n")
+                datafile.write(str(round(endVoltage - startVoltage / stepsVoltage, 4)) + "\n")
                 datafile.write(str(stepsVoltage) + "\n")
                 datafile.write(str(stepsMotor) + "\n")
                 
