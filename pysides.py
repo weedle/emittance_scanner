@@ -34,7 +34,7 @@ calibrated = False
 voltage_Start = -2
 voltage_End = 2
 
-motor_steps = 100
+motor_steps = 10
 voltage_steps = 50
 
 STATUS_HOME = 1
@@ -295,7 +295,7 @@ def getMainFrame():
 
 def setup_default_values():
     object_map["inputMotorAutoStart"].setText("160")
-    object_map["inputMotorAutoEnd"].setText("196")
+    object_map["inputMotorAutoEnd"].setText("190")
     object_map["inputVoltageAutoStart"].setText(str(voltage_Start))
     object_map["inputVoltageAutoEnd"].setText(str(voltage_End))
     object_map["inputMotorAutoNumSteps"].setText(str(motor_steps))
