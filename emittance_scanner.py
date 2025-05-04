@@ -5,13 +5,14 @@ import json
 import sys
 import time
 import traceback
+import os
 
 import pysides
 import numpy as np
 
 # For development, a placeholder file is available that simulates a Galil microprocessor
-import motor_control_fake as mc
-#import motor_control_galil as mc
+#import motor_control_fake as mc
+import motor_control_galil as mc
 from pysides import object_map
 
 # This is the main application
@@ -20,11 +21,15 @@ from pysides import object_map
 
 # application in global values cause I was in a rush
 running = True
-keepCheckingStatus = True
+keepCheckingStatus = True   
 currentPosition = 0
 currentStatus = 0
 currentOutputVoltage = 0
 currentInputVoltage = 0
+PROPERTIES_FILE_NAME = "properties.json"
+full_path = os.path.realpath(__file__)
+script_path, _ = os.path.split(full_path)
+properties_file_path = os.path.join(script_path, PROPERTIES_FILE_NAME)
 
 # Static buttons
 @Slot()
@@ -146,7 +151,7 @@ class MainWindow(QMainWindow):
 
         settings = self.loadSettings()
         mc.setup(settings["address"])
-        pysides.file_path = settings["saveLocation"]
+        pysides.results_dir = settings["saveLocation"]
 
 
         self.setWindowTitle("IONSID Emittance Scanning")
@@ -166,8 +171,9 @@ class MainWindow(QMainWindow):
         self.doneCalibration()
 
     def loadSettings(self):
+        print(properties_file_path)
         try:
-            with open("properties.json") as file:
+            with open(properties_file_path) as file:
                 data = json.load(file)
                 print(data)
         except FileNotFoundError as e:
@@ -248,7 +254,7 @@ class MainWindow(QMainWindow):
         while running:
             try:
                 pysides.setFileName()
-                datafile = open(pysides.file_path + object_map["inputFile"].text(), 'w')
+                datafile = open(os.path.join(pysides.results_dir, object_map["inputFile"].text()), 'w')
                 print(object_map["inputFile"].text())
 
                 datafile.write(object_map["inputComment"].text() + "\n")
@@ -260,9 +266,9 @@ class MainWindow(QMainWindow):
                 datafile.write(str(pysides.get_position_in_mm_raw(startMotor)) + "\n")
                 steps_to_mm = 196 / (pysides.auto_End - pysides.auto_Home)
                 print("steps to mm conversion is", steps_to_mm)
-                datafile.write(str(round((endMotor - startMotor) / stepsMotor * steps_to_mm, 4)) + "\n")
+                datafile.write(str(round(stepsMotor * steps_to_mm, 4)) + "\n")
                 datafile.write(str(startVoltage) + "\n")
-                datafile.write(str(round((endVoltage - startVoltage) / stepsVoltage, 4)) + "\n")
+                datafile.write(str(round(endVoltage - startVoltage / stepsVoltage, 4)) + "\n")
                 datafile.write(str(stepsVoltage) + "\n")
                 datafile.write(str(stepsMotor) + "\n")
                 
@@ -347,7 +353,7 @@ class MainWindow(QMainWindow):
         settings = getMeasurementSettings()
         startVoltage = settings["start_auto_voltage"]
         endVoltage = settings["end_auto_voltage"]
-        stepsVoltage = settings["voltage_auto_step_size"]
+        stepsVoltage = settings["voltage_auto_num_steps"]
         startMotor = settings["start_auto_motor"]
         endMotor = settings["end_auto_motor"]
         stepsMotor = settings["motor_auto_num_steps"]

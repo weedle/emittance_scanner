@@ -1,2 +1,5 @@
 results/
 properties.json
+venv/
+__pycache__/
+*.dat
