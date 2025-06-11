@@ -289,7 +289,7 @@ class MainWindow(QMainWindow):
                         mc.set_output_voltage(round(currentOutputVoltage, 2))
                         time.sleep(0.05)
                         dataline += str(currentInputVoltage) + " "
-                        print(f"currently at {pos} and sending out {round(currentOutputVoltage, 2)} to read in {currentInputVoltage}")
+                        print(f"currently at {pos} ({pysides.get_position_in_mm(pos)}) and sending out {round(currentOutputVoltage, 2)} to read in {currentInputVoltage}")
                     datafile.write(dataline + "\n")
                 datafile.close()
                 running = False
