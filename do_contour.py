@@ -4,11 +4,13 @@ from scipy.ndimage import gaussian_filter
 
 # Data processing; you can invoke load_file and run from a shell if you just want to analyse existing data
 
-filename = "datafile_2025-03-30_15-57.dat"
+global filename
 global file
 
-def load_file(filename):
+def load_file(name):
+    global filename
     global file
+    filename = name
     file = open(filename, 'r')
 
 def get_line():
@@ -119,6 +121,9 @@ def run():
     ax0.text(0.46, 0.03, calc1, transform = ax0.transAxes, color = 'w', fontsize = 18)
     plt.tight_layout()
 
+    img = filename.replace('.dat', '.png')
+    plt.savefig(img)
+    print("saved to", img)
     plt.show()
 
 if __name__ == "__main__":
