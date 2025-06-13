@@ -107,7 +107,8 @@ def run():
 
     fig0, ax0 = plt.subplots(figsize=(7, 8), facecolor = 'w', edgecolor = 'k')
 
-    cnt = plt.contourf(xNew,thetaNew,df, 50, cmap='jet')
+    #cnt = plt.contourf(xNew,thetaNew,df, 50, cmap='jet')
+    plt.imshow(df, cmap='jet')
     cbar = plt.colorbar()
     cbar.set_label("Voltage read (V)")
 
